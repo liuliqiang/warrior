@@ -44,4 +44,6 @@ class Config(object):
     BLOG_URL = "http://localhost:8880"
     BLOG_ID = ""
 
+    TMP_PATH = "/tmp"
+
 conf = Config()

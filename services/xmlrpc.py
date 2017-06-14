@@ -8,7 +8,8 @@ from utils import logger
 from configs import conf
 
 from services import (auth as auth_srv,
-                      category as ctg_srv)
+                      category as ctg_srv,
+                      media as media_srv)
 
 
 class MetaWeblogApi(object):
@@ -66,8 +67,14 @@ class MetaWeblogApi(object):
         """
         return {"categories": ctg_srv.get_categories()}
 
-    def _newMediaObject(self, req_obj):
-        return {}
+    def _newMediaObject(self):
+        blog_id = str(self.req_obj.params.param[0].value.string)
+        filename = str(self.req_obj.params.param[3].value.struct.member[2].value.string)
+        mime_type = str(self.req_obj.params.param[3].value.struct.member[3].value.string)
+        bits = str(self.req_obj.params.param[3].value.struct.member[1].value.base64)
+        overwrite = str(self.req_obj.params.param[3].value.struct.member[0].value.boolean)
+
+        media_srv.save_image(filename, bits)
 
     def _getTemplate(self, req_obj):
         return {}

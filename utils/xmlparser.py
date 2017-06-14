@@ -18,8 +18,10 @@ class XMLObject(object):
     def __str__(self):
         if self.root is None:
             return ""
-
-        return self.root.text or ""
+        elif isinstance(self.root, type([])):
+            return self.root[0].text or ""
+        else:
+            return self.root.text or ""
 
     def __repr__(self):
         return self.__str__()
@@ -27,19 +29,23 @@ class XMLObject(object):
     def __getattr__(self, attr):
         if self.root is None:
             return XMLObject(None)
+        elif isinstance(self.root, type([])):
+            root_ = self.root[0]
+        else:
+            root_ = self.root
 
-        name_nodes = self.root.findall(attr)
+        name_nodes = root_.findall(attr)
         if name_nodes:
-            return XMLObject(name_nodes[0])
+            return XMLObject(name_nodes)
         else:
             return XMLObject(None)
 
     # array like feature
     def __getitem__(self, idx):
-        return XMLObject(self.dict_[idx])
+        return XMLObject(self.root[idx])
 
     def __len__(self):
-        if self.root is not None:
+        if isinstance(self.root, type([])):
             return len(self.root)
         raise TypeError("object of type '{}' has no len()".format(self.__class__))
 
