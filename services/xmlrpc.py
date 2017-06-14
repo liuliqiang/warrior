@@ -7,20 +7,25 @@
 from utils import logger
 from configs import conf
 
-from services import (auth as auth_srv)
+from services import (auth as auth_srv,
+                      category as ctg_srv)
 
 
 class MetaWeblogApi(object):
-    def __init__(self, req_obj):
+    def __init__(self, req_obj=None):
+        if req_obj is not None:
+            self.req_obj = req_obj
+
+    def parse(self, req_obj):
         self.req_obj = req_obj
 
     def invoke(self):
+        print(self.req_obj.methodName)
         api_version, method_name = str(self.req_obj.methodName).split(".")
 
-        rst = self.__getattribute__("_" + method_name)()
-
-        rst["api_version"] = api_version
-        rst["method_name"] = method_name
+        rst = {"data": self.__getattribute__("_" + method_name)(),
+               "api_version": api_version,
+               "method_name": method_name}
 
         return rst
 
@@ -32,6 +37,9 @@ class MetaWeblogApi(object):
         return auth_srv.check(username, password)
 
     def _getUsersBlogs(self):
+        """
+        Returns information about all the blogs a given user is a member of.
+        """
         return {
             "blog_name": conf.BLOG_NAME,
             "xmlrpc_url": "{}/xmlrpc".format(conf.BLOG_URL),
@@ -52,8 +60,11 @@ class MetaWeblogApi(object):
     def _deletePost(self, req_obj):
         return {}
 
-    def _getCategories(self, req_obj):
-        return {}
+    def _getCategories(self):
+        """
+        Retrieve list of categories.
+        """
+        return {"categories": ctg_srv.get_categories()}
 
     def _newMediaObject(self, req_obj):
         return {}

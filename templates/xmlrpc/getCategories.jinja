@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions">
+    <params>
+        <param>
+            <value>
+                <array>
+                    <data>
+
+
+                    {% for category in categories %}
+
+                       <value>
+                            <struct>
+                                <member>
+                                    <name>htmlUrl</name>
+                                    <value>{{ category.get('html_url') }}</value>
+                                </member>
+                                <member>
+                                    <name>description</name>
+                                    <value>{{ category.get('desc') }}</value>
+                                </member>
+                                <member>
+                                    <name>title</name>
+                                    <value>{{ category.get('title') }}</value>
+                                </member>
+                                <member>
+                                    <name>categoryid</name>
+                                    <value>{{ category.get('id') }}</value>
+                                </member>
+                                <member>
+                                    <name>rssUrl</name>
+                                    <value>{{ category.get('rss_url') }}</value>
+                                </member>
+                            </struct>
+                        </value>
+
+                    {% end %}
+
+
+                    </data>
+                </array>
+            </value>
+        </param>
+    </params>
+</methodResponse>

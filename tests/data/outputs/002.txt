@@ -1,0 +1,1 @@
+api_version=metaWeblog&data=desc=default&html_url=http://localhost:8880/catalog/336753&id=3367534&rss_url=&title=default&method_name=getCategories

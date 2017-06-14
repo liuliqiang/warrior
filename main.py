@@ -4,6 +4,10 @@ import tornado.ioloop
 import tornado.web
 
 from utils.xmlparser import XMLObject
+from services.xmlrpc import MetaWeblogApi
+
+
+api = MetaWeblogApi()
 
 
 class TypeException(Exception):
@@ -12,33 +16,19 @@ class TypeException(Exception):
 
 
 class XmlRpcHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.write("Hello, world")
-
     def post(self):
         req_data = self.request.body
         print(req_data)
-        obj = XMLObject(xml_str=req_data)
-        # for param in obj.params:
-        #     print(param.value.string)
+        api.parse(XMLObject(xml_str=req_data))
 
-        method_name = obj.methodName
-        print("method_name: {}".format(method_name))
-        # if method_name != "blogger.getUsersBlogs":
-        #     self.write("no support method")
+        rst = api.invoke()
 
-        appkey, username, password = [param.value.string for param in obj.params]
-        print('appkey: {}'.format(appkey))
-        print('username: {}'.format(username))
-        print('password: {}'.format(password))
-
-        self.render("xmlrpc/getUsersBlogs.jinja",
-                    blog_name="Tornado 测试博客",
-                    xmlrpc_url="http://localhost:8880/xmlrpc",
-                    is_admin="true",
-                    blog_id="0000000001",
-                    blog_url="http://localhost:8880")
-
+        if rst.get("status", True):
+            template_name = "xmlrpc/{}.jinja".format(rst.get("method_name"))
+            print(rst.get("data"))
+            self.render(template_name, **(rst.get("data")))
+        else:
+            self.write(rst.get("msg"))
 
 application = tornado.web.Application([
     (r"/xmlrpc", XmlRpcHandler),
