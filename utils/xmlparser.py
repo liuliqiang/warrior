@@ -3,38 +3,17 @@
 from xml.etree import ElementTree as ET
 
 
-xml_str = """<?xml version="1.0" encoding="UTF-8"?>
-<methodCall>
-   <methodName>blogger.getUsersBlogs</methodName>
-   <params>
-      <param>
-         <value>
-            <string />
-         </value>
-      </param>
-      <param>
-         <value>
-            <string>admin</string>
-         </value>
-      </param>
-      <param>
-         <value>
-            <string>admin</string>
-         </value>
-      </param>
-   </params>
-</methodCall>
-"""
-
-
 class TypeException(Exception):
     def __init__(self, *args, **kwargs):
         super(TypeException, self).__init__(*args, **kwargs)
 
 
 class XMLObject(object):
-    def __init__(self, root):
-        self.root = root
+    def __init__(self, root=None, xml_str=None):
+        if xml_str is not None:
+            self.root = ET.fromstring(xml_str)
+        else:
+            self.root = root
 
     def __str__(self):
         if self.root is None:
@@ -73,6 +52,7 @@ class XMLObject(object):
 
 
 if __name__ == "__main__":
+    xml_str = ""
     o2 = XMLObject(ET.fromstring(xml_str))
     print("02.__dict__ is: {}".format(o2.__dict__))
     print("o2.methodName is: {}".format(o2.methodName))

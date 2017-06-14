@@ -1,0 +1,1 @@
+api_version=blogger&blog_id=0000000001&blog_name=Tornado 测试博客&blog_url=http://localhost:8880&is_admin=true&method_name=getUsersBlogs&xmlrpc_url=http://localhost:8880/xmlrpc

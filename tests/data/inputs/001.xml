@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<methodCall>
+   <methodName>blogger.getUsersBlogs</methodName>
+   <params>
+      <param>
+         <value>
+            <string />
+         </value>
+      </param>
+      <param>
+         <value>
+            <string>admin</string>
+         </value>
+      </param>
+      <param>
+         <value>
+            <string>admin</string>
+         </value>
+      </param>
+   </params>
+</methodCall>

@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # encoding: utf-8
-from xml.etree import ElementTree as ET
-
 import tornado.ioloop
 import tornado.web
-import xmltodict
+
+from utils.xmlparser import XMLObject
 
 
 class TypeException(Exception):
@@ -12,79 +11,40 @@ class TypeException(Exception):
         super(TypeException, self).__init__(*args, **kwargs)
 
 
-class ReqObject(object):
-    def __init__(self, dict_):
-        self.dict_ = dict_
-
-    def __str__(self):
-        if not self.dict_:
-            return ""
-
-        if not isinstance(self.dict_, type("")):
-            raise TypeException("not a node value")
-        return str(self.dict_)
-
-    def __getattr__(self, attr):
-        if attr in self.dict_:
-            return ReqObject(self.dict_[attr])
-        else:
-            return ReqObject({})
-
-    # array like feature
-    def __getitem__(self, idx):
-        return ReqObject(self.dict_[idx])
-
-    def __len__(self):
-        return len(self.dict_)
-
-    def __iter__(self):
-        for elem in self.dict_:
-            yield ReqObject(elem)
-
-
-class MainHandler(tornado.web.RequestHandler):
+class XmlRpcHandler(tornado.web.RequestHandler):
     def get(self):
         self.write("Hello, world")
 
     def post(self):
         req_data = self.request.body
         print(req_data)
-        obj = ReqObject(xmltodict.parse(req_data))
-        print(obj.dict_)
-        print(obj.__dict__)
-        print(obj.methodCall.methodName)
-        print(len(obj.methodCall.params.param))
-        for param in obj.methodCall.params.param:
-            print(param.value.string)
-        # tree = ET.fromstring(req_data)
+        obj = XMLObject(xml_str=req_data)
+        # for param in obj.params:
+        #     print(param.value.string)
 
-        # method_name_nodes = tree.findall("methodName")
-        # if not method_name_nodes:
-        #     return False
-        # method_name = method_name_nodes[0].text
+        method_name = obj.methodName
+        print("method_name: {}".format(method_name))
         # if method_name != "blogger.getUsersBlogs":
-        #     return False
+        #     self.write("no support method")
 
-        # params_root_nodes = tree.findall("params")
-        # if not params_root_nodes:
-        #     return False
-        # params_nodes = params_root_nodes[0].getchildren()
-        # if not params_nodes or len(params_nodes) != 3:
-        #     return False
-        # appkey, username, password = [param_node.findall("value")[0].findall("string")[0].text for param_node in params_nodes]
+        appkey, username, password = [param.value.string for param in obj.params]
+        print('appkey: {}'.format(appkey))
+        print('username: {}'.format(username))
+        print('password: {}'.format(password))
 
-        self.write("")
+        self.render("xmlrpc/getUsersBlogs.jinja",
+                    blog_name="Tornado 测试博客",
+                    xmlrpc_url="http://localhost:8880/xmlrpc",
+                    is_admin="true",
+                    blog_id="0000000001",
+                    blog_url="http://localhost:8880")
 
 
 application = tornado.web.Application([
-    (r"/", MainHandler),
-])
+    (r"/xmlrpc", XmlRpcHandler),
+], template_path="templates")
+
 
 if __name__ == "__main__":
     application.listen(8880)
     tornado.ioloop.IOLoop.instance().start()
-    # obj = ReqObject({"a": "b", "c": {"d": "e"}})
-    # print(str(obj.test))
-    # print(obj.a)
-    # print(obj.c)
-    # print(obj.c.d)

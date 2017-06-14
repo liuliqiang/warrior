@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<methodResponse xmlns:ex="http://ws.apache.org/xmlrpc/namespaces/extensions">
+    <params>
+        <param>
+            <value>
+                <array>
+                    <data>
+                        <value>
+                            <struct>
+                                <member>
+                                    <name>blogName</name>
+                                    <value>{{ blog_name }}</value>
+                                </member>
+                                <member>
+                                    <name>xmlrpc</name>
+                                    <value>{{ xmlrpc_url }}</value>
+                                </member>
+                                <member>
+                                    <name>isAdmin</name>
+                                    <value>{{ is_admin }}</value>
+                                </member>
+                                <member>
+                                    <name>blogid</name>
+                                    <value>{{ blog_id }}</value>
+                                </member>
+                                <member>
+                                    <name>url</name>
+                                    <value>{{ blog_url }}</value>
+                                </member>
+                            </struct>
+                        </value>
+                    </data>
+                </array>
+            </value>
+        </param>
+    </params>
+</methodResponse>
