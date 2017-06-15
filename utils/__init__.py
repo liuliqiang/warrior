@@ -10,5 +10,5 @@ from configs import conf
 
 
 logger = logging.getLogger(conf.PROJECT_NAME)
-logging.basicConfig(format=conf.LOGGING_FORMAT)
+logging.basicConfig(format=conf.LOGGING_FORMAT, datefmt=conf.LOGGING_TIMEFORMAT)
 logger.setLevel(conf.LOGGING_LEVEL)

@@ -3,6 +3,7 @@
 import tornado.ioloop
 import tornado.web
 
+from utils import logger
 from utils.xmlparser import XMLObject
 from services.xmlrpc import MetaWeblogApi
 
@@ -30,8 +31,25 @@ class XmlRpcHandler(tornado.web.RequestHandler):
         else:
             self.write(rst.get("msg"))
 
+
+class TestHandler(tornado.web.RequestHandler):
+    from tornado import gen
+    from tornado.web import asynchronous
+
+    @asynchronous
+    @gen.engine
+    def get(self, *args, **kwargs):
+        from datetime import datetime
+        from services.db import worker
+        self.write("begin at: {}<br/>".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+        yield worker(1)
+        logger.info("OK")
+        self.write("finish at: {}<br/>".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+        self.finish("ok")
+
 application = tornado.web.Application([
     (r"/xmlrpc", XmlRpcHandler),
+    (r"/test", TestHandler)
 ], template_path="templates")
 
 

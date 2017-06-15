@@ -36,7 +36,8 @@ class Config(object):
 
     # project config following
     PROJECT_NAME = "Warrior"
-    LOGGING_FORMAT = "[%(filename)-24s:%(lineno)4s] %(message)s"
+    LOGGING_FORMAT = "[%(asctime)s  %(filename)-24s:%(lineno)4s] %(message)s"
+    LOGGING_TIMEFORMAT = "%Y-%m-%d %H:%M:%S"
     LOGGING_LEVEL = logging.DEBUG
 
     # blog config
