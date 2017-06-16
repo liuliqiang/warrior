@@ -74,7 +74,8 @@ class MetaWeblogApi(object):
         bits = str(self.req_obj.params.param[3].value.struct.member[1].value.base64)
         overwrite = str(self.req_obj.params.param[3].value.struct.member[0].value.boolean)
 
-        media_srv.save_image(filename, bits)
+        image_url = media_srv.save_image(filename, bits)
+        return {"media_url": image_url}
 
     def _getTemplate(self, req_obj):
         return {}

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # encoding: utf-8
 import tornado.ioloop
-import tornado.web
+from tornado import gen
+from tornado.web import asynchronous, Application, RequestHandler
 
 from utils import logger
 from utils.xmlparser import XMLObject
@@ -16,7 +17,9 @@ class TypeException(Exception):
         super(TypeException, self).__init__(*args, **kwargs)
 
 
-class XmlRpcHandler(tornado.web.RequestHandler):
+class XmlRpcHandler(RequestHandler):
+    @asynchronous
+    @gen.engine
     def post(self):
         req_data = self.request.body
         print(req_data)
@@ -32,10 +35,7 @@ class XmlRpcHandler(tornado.web.RequestHandler):
             self.write(rst.get("msg"))
 
 
-class TestHandler(tornado.web.RequestHandler):
-    from tornado import gen
-    from tornado.web import asynchronous
-
+class TestHandler(RequestHandler):
     @asynchronous
     @gen.engine
     def get(self, *args, **kwargs):
@@ -47,7 +47,8 @@ class TestHandler(tornado.web.RequestHandler):
         self.write("finish at: {}<br/>".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
         self.finish("ok")
 
-application = tornado.web.Application([
+
+application = Application([
     (r"/xmlrpc", XmlRpcHandler),
     (r"/test", TestHandler)
 ], template_path="templates")

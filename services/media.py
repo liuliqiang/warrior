@@ -14,3 +14,4 @@ def save_image(filename, b64data):
     file_path = os.path.join(conf.TMP_PATH, filename)
     with open(file_path, "wb") as fh:
         fh.write(base64.decodebytes(bytes(b64data, encoding="utf-8")))
+    return "{}/static/{}".format(conf.BLOG_URL, filename)

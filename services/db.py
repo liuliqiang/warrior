@@ -19,6 +19,7 @@ POOL = pools.Pool(dict(host='127.0.0.1', port=3306, user='root',
                   max_open_connections=100,
                   max_recycle_sec=3)
 
+
 @gen.coroutine
 def create_null_post():
     logger.debug("create a null post now")
@@ -27,6 +28,7 @@ def create_null_post():
     cur = yield tran.execute("SELECT LAST_INSERT_ID()")
     yield tran.commit()
     print(cur.fetchall())
+
 
 @gen.coroutine
 def exec_sql(sql, n):
