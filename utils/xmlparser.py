@@ -42,6 +42,8 @@ class XMLObject(object):
 
     # array like feature
     def __getitem__(self, idx):
+        if isinstance(idx, slice):
+            return XMLObject([self.root[i] for i in range(idx.start or 0, idx.stop, idx.step or 1)])
         return XMLObject(self.root[idx])
 
     def __len__(self):

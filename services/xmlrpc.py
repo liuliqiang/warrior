@@ -4,12 +4,16 @@
     A simple python script template.
     Created by yetship at 2017/6/14 下午11:22
 """
+from tornado import gen
+from dateutil.parser import parse
+
 from utils import logger
 from configs import conf
 
 from services import (auth as auth_srv,
                       category as ctg_srv,
-                      media as media_srv)
+                      media as media_srv,
+                      post as post_srv)
 
 
 class MetaWeblogApi(object):
@@ -34,7 +38,7 @@ class MetaWeblogApi(object):
         return self._check_auth() and self.invoke()
 
     def _check_auth(self):
-        _, username, password = [p.value.string for p in self.req_obj.params]
+        _, username, password = [p.value.string for p in self.req_obj.params.param[:3]]
         return auth_srv.check(username, password)
 
     def _getUsersBlogs(self):
@@ -52,8 +56,22 @@ class MetaWeblogApi(object):
     def _getPost(self, req_obj):
         return {}
 
-    def _newPost(self, req_obj):
-        return {}
+    def _newPost(self):
+        post = {
+            "post_status": self.req_obj.params.param[3].value.struct.member[0].value.string,
+            "post_type": self.req_obj.params.param[3].value.struct.member[1].value.string,
+            "categories": [category.data.value.string for category in self.req_obj.params.param[3].value.struct.member[2].value.array],
+            "title": self.req_obj.params.param[3].value.struct.member[3].value.string,
+            "dateCreated": parse(self.req_obj.params.param[3].value.struct.member[4].value.root[0].findall("dateTime.iso8601")[0].text).strftime("%Y-%m-%d %H:%M:%S"),
+            "wp_slug": self.req_obj.params.param[3].value.struct.member[5].value.string,
+            "description": self.req_obj.params.param[3].value.struct.member[6].value.string,
+            "mt_keywords": self.req_obj.params.param[3].value.struct.member[7].value.string,
+            "oper": self.req_obj.params.param[4].value.boolean,
+        }
+
+        result = post_srv.new_post(**post)
+        print("result: {}".format(result))
+        return {"post_id": result}
 
     def _editPost(self, req_obj):
         return {}

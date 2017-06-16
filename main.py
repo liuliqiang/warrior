@@ -25,7 +25,7 @@ class XmlRpcHandler(RequestHandler):
         print(req_data)
         api.parse(XMLObject(xml_str=req_data))
 
-        rst = api.invoke()
+        rst = api.proc_req()
 
         if rst.get("status", True):
             template_name = "xmlrpc/{}.jinja".format(rst.get("method_name"))
