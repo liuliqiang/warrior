@@ -26,3 +26,13 @@ def exec_sql(sql):
     conn.close()
 
     return rst
+
+
+def query_sql(sql):
+    conn = pool.connection()
+    cur = conn.cursor()
+    cur.execute(sql)
+    rst = cur.fetchall()
+    cur.close()
+    conn.close()
+    return rst

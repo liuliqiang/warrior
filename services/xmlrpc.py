@@ -53,8 +53,12 @@ class MetaWeblogApi(object):
             "blog_url": conf.BLOG_URL
         }
 
-    def _getPost(self, req_obj):
-        return {}
+    def _getPost(self):
+        post_id = self.req_obj.params.param[0].value.string
+
+        post = post_srv.get_post(post_id)
+
+        return post
 
     def _newPost(self):
         post = {
