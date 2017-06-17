@@ -77,8 +77,22 @@ class MetaWeblogApi(object):
         print("result: {}".format(result))
         return {"post_id": result}
 
-    def _editPost(self, req_obj):
-        return {}
+    def _editPost(self):
+        post = {
+            "post_id": self.req_obj.params.param[0].value.string,
+            "post_status": self.req_obj.params.param[3].value.struct.member[0].value.string,
+            "post_type": self.req_obj.params.param[3].value.struct.member[1].value.string,
+            "categories": [category.data.value.string for category in self.req_obj.params.param[3].value.struct.member[2].value.array],
+            "title": self.req_obj.params.param[3].value.struct.member[3].value.string,
+            "dateCreated": parse(self.req_obj.params.param[3].value.struct.member[4].value.root[0].findall("dateTime.iso8601")[0].text).strftime("%Y-%m-%d %H:%M:%S"),
+            "wp_slug": self.req_obj.params.param[3].value.struct.member[5].value.string,
+            "description": self.req_obj.params.param[3].value.struct.member[6].value.string,
+            "mt_keywords": self.req_obj.params.param[3].value.struct.member[7].value.string
+        }
+
+        post_srv.update_post(**post)
+
+        return {"edit_result": 1}
 
     def _deletePost(self, req_obj):
         return {}
