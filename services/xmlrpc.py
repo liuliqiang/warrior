@@ -4,16 +4,12 @@
     A simple python script template.
     Created by yetship at 2017/6/14 下午11:22
 """
-from tornado import gen
-from dateutil.parser import parse
-
 from utils import logger
 from configs import conf
 
-from services import (auth as auth_srv,
-                      category as ctg_srv,
-                      media as media_srv,
-                      post as post_srv)
+from dateutil.parser import parse
+
+from services import auth as auth_srv, category as ctg_srv, post as post_srv
 
 
 class MetaWeblogApi(object):
@@ -25,7 +21,7 @@ class MetaWeblogApi(object):
         self.req_obj = req_obj
 
     def invoke(self):
-        print(self.req_obj.methodName)
+        logger.debug(self.req_obj.methodName)
         api_version, method_name = str(self.req_obj.methodName).split(".")
 
         rst = {"data": self.__getattribute__("_" + method_name)(),
@@ -102,16 +98,6 @@ class MetaWeblogApi(object):
         Retrieve list of categories.
         """
         return {"categories": ctg_srv.get_categories()}
-
-    def _newMediaObject(self):
-        blog_id = str(self.req_obj.params.param[0].value.string)
-        filename = str(self.req_obj.params.param[3].value.struct.member[2].value.string)
-        mime_type = str(self.req_obj.params.param[3].value.struct.member[3].value.string)
-        bits = str(self.req_obj.params.param[3].value.struct.member[1].value.base64)
-        overwrite = str(self.req_obj.params.param[3].value.struct.member[0].value.boolean)
-
-        image_url = media_srv.save_image(filename, bits)
-        return {"media_url": image_url}
 
     def _getTemplate(self, req_obj):
         return {}

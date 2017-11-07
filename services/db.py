@@ -6,20 +6,17 @@
 """
 import MySQLdb
 from DBUtils.PooledDB import PooledDB
-from tornado import ioloop, gen
-from tornado.web import asynchronous
-
-from utils import logger
 
 
+# local db setting
 pool = PooledDB(MySQLdb, 20, host="localhost", user="root", password="password",
                 db="mdpress", port=3306, charset="utf8")
 
 
-def exec_sql(sql):
+def exec_sql(sql, *args):
     conn = pool.connection()
     cur = conn.cursor()
-    cur.execute(sql)
+    cur.execute(sql, args)
     rst = cur.fetchall
     conn.commit()
     cur.close()
