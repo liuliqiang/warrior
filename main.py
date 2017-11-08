@@ -17,14 +17,26 @@ class TypeException(Exception):
         super(TypeException, self).__init__(*args, **kwargs)
 
 
+# findout client
+def parse_client(req_headers):
+    ua = req_headers.get("User-Agent")
+    if "MWEB" in ua.upper():
+        client = "MWEB"
+    else:
+        client = "OTHER"
+    return client
+
+
 class XmlRpcHandler(RequestHandler):
     @asynchronous
     @gen.engine
     def post(self):
         req_data = self.request.body
+        client = parse_client(self.request.headers)
+
         api.parse(XMLObject(xml_str=req_data))
 
-        rst = api.proc_req()
+        rst = api.proc_req(client)
 
         if rst.get("status", True):
             template_name = "xmlrpc/{}.jinja".format(rst.get("method_name"))

@@ -30,7 +30,7 @@ class MetaWeblogApi(object):
 
         return rst
 
-    def proc_req(self):
+    def proc_req(self, *args, **kwargs):
         return self._check_auth() and self.invoke()
 
     def _check_auth(self):
